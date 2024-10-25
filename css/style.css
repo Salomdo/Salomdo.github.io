@@ -195,3 +195,13 @@ button:hover {
     }
 
 }
+
+@media (max-width: 450px) {
+
+    .celda {
+        height: 90px;
+        width: 90px;
+        font-size: 3em;
+    }
+
+}
