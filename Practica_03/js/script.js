@@ -80,27 +80,35 @@ function manejarClick(r, c) {
   if (!tablero[r][c].revelado && !tablero[r][c].conBandera) revelarCelda(r, c);
 }
 
-function revelarCelda(r, c) {
+function revelarCelda(r, c, contador = { reveladas: 0 }) {
   if (estadoJuegoTerminado || r < 0 || r >= filas || c < 0 || c >= columnas || tablero[r][c].revelado) return;
 
   const celda = document.getElementById('tablero').children[r * columnas + c];
   tablero[r][c].revelado = true;
   celda.classList.add('revelado');
 
+  contador.reveladas++;
+
+  const LIMITE_REVELADO = 10;
+  if (contador.reveladas > LIMITE_REVELADO) return;
+
   if (tablero[r][c].mina) {
     celda.classList.add('mina');
     finalizarJuego(false);
-  } else {
-    celda.textContent = tablero[r][c].conteo > 0 ? tablero[r][c].conteo : '';
-    if (tablero[r][c].conteo === 0) {
-      for (let i = r - 1; i <= r + 1; i++) {
-        for (let j = c - 1; j <= c + 1; j++) {
-          revelarCelda(i, j);
-        }
+    return;
+  }
+
+  celda.textContent = tablero[r][c].conteo > 0 ? tablero[r][c].conteo : '';
+
+  if (tablero[r][c].conteo === 0) {
+    for (let i = r - 1; i <= r + 1; i++) {
+      for (let j = c - 1; j <= c + 1; j++) {
+        revelarCelda(i, j, contador); 
       }
     }
   }
-  verificarVictoria();
+
+  verificarVictoria(); 
 }
 
 function reiniciarMinas(filaInicial, colInicial) {
