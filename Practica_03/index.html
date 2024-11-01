@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscaminas</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <h1>Buscaminas</h1>
+    <div id="config">
+      <label for="filas">Filas:</label>
+      <input type="number" id="filas" min="5" value="5">
+      
+      <label for="columnas">Columnas:</label>
+      <input type="number" id="columnas" min="5" value="5">
+      
+      <label for="minas">Minas:</label>
+      <input type="number" id="minas" min="1" value="5">
+      
+      <label for="dificultad">Dificultad:</label>
+      <select id="dificultad">
+        <option value="personalizado">Personalizado</option>
+        <option value="facil">Fácil (5x5, 5 minas)</option>
+        <option value="medio">Medio (10x10, 15 minas)</option>
+        <option value="dificil">Difícil (15x15, 40 minas)</option>
+        <option value="muy-dificil">Muy Difícil (20x20, 80 minas)</option>
+        <option value="leyenda">Leyenda (25x25, 120 minas)</option>
+      </select>
+      
+      <button id="iniciar" onclick="iniciarJuego()">Iniciar Juego</button>
+      <button id="reiniciar" onclick="reiniciarJuego()">Reiniciar Partida</button>
+    </div>
+  </header>
+
+  <!-- Tablero -->
+  <div class="container">
+    <div id="tablero" style="display: none;"></div>
+  </div>
+
+  <!-- Victoria o derrota -->
+  <div id="modal" class="modal">
+    <div class="modal-contenido">
+      <span class="cerrar" onclick="cerrarModal()">&times;</span>
+      <p id="modal-mensaje"></p>
+    </div>
+  </div>  
+
+  <script src="js/script.js"></script>
+  
+</body>
+</html>

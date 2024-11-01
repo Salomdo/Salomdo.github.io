@@ -1,0 +1,158 @@
+/* Por mi sanidad mental esta vez no traté de hacerlo responsive... */
+
+body {
+  background-color: #2e2e2e; 
+  color: #ffffff;
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: #2e2e2e;
+  text-align: center;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 180px;
+}
+
+/* Tablero. */
+#tablero {
+  display: grid;
+  gap: 2px;
+  margin-top: 20px;
+}
+
+/* Estilos de las celdas del tablero. */
+.celda {
+  width: 30px;
+  height: 30px;
+  background-color: #3a3a3a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffffff;
+  cursor: pointer;
+  border: 2px solid #2e2e2e;
+  transition: background-color 0.3s;
+}
+
+/* Estilo para celdas reveladas. */
+.celda.revelado {
+  background-color: #606060; 
+}
+
+/* Colores para minas y banderas. */
+.celda.mina {
+  background-color: #e70a4a; 
+}
+
+.celda.bandera {
+  background-color: #ecae32; 
+}
+
+/* Estilos para inputs. */
+input[type="number"] {
+  background-color: #4e4e4e;
+  border: 1px solid #ffffff;
+  color: #ffffff;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
+  font-size: 16px;
+  width: 60px;
+  text-align: center;
+}
+
+/* Estilo para el selector de dificultad. */
+select {
+  background-color: #4e4e4e;
+  border: 1px solid #ffffff;
+  color: #ffffff;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
+  font-size: 16px;
+  width: 240px;
+  text-align: center;
+}
+
+/* Estilos de botones generales. */
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Botones para iniciar y reiniciar. */
+#iniciar,
+#reiniciar {
+  background-color: #6a0dad;
+  color: #ffffff;
+  margin-top: 20px;
+}
+
+#iniciar:hover,
+#reiniciar:hover {
+  background-color: #540b9c; 
+}
+
+/* Victoria o derrota. */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 2;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-contenido {
+  background-color: #2e2e2e;
+  color: #ffffff;
+  font-size: 25px;
+  font-weight: bold;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.cerrar {
+  color: #ffffff;
+  float: right;
+  font-size: 45px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: -15px;
+}
+
+.cerrar:hover {
+  color: #e70a4a; 
+}
+
+/* No es broma, no hay responsive por esta ocasión. */
