@@ -102,16 +102,46 @@ function reiniciarJuego() {
     tiempoInicio = new Date().getTime();
 }
 
+
+
 function guardarMejorTiempo(nombreJugador, tiempo) {
-    let mejoresTiempos = JSON.parse(localStorage.getItem('mejoresTiempos')) || [];
-    mejoresTiempos.push({ nombre: nombreJugador, tiempo: tiempo, fecha: new Date() });
-    mejoresTiempos.sort((a, b) => a.tiempo - b.tiempo);
-    mejoresTiempos = mejoresTiempos.slice(0, 10);
-    localStorage.setItem('mejoresTiempos', JSON.stringify(mejoresTiempos));
-    cargarMejoresTiempos();
+    const game = "Tic-Tac-Toe"; // Nombre único del juego
+
+    // Crear el payload
+    const data = new URLSearchParams({
+        score: Math.round(tiempo * 1000), // Convertir a milisegundos
+        player: nombreJugador,
+        game: game
+    });
+
+    // Hacer la petición AJAX
+    fetch("http://primosoft.com.mx/games/api/addscore.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: data.toString(),
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            alert("¡Puntaje guardado exitosamente!");
+            cargarMejoresTiempos();
+        } else {
+            alert("Error al guardar el puntaje.");
+        }
+    })
+    .catch(error => console.error("Error:", error));
 }
 
 function cargarMejoresTiempos() {
-    let mejoresTiempos = JSON.parse(localStorage.getItem('mejoresTiempos')) || [];
-    listaMejoresTiempos.innerHTML = mejoresTiempos.map(entry => `<li>${entry.nombre}: ${entry.tiempo}s (${new Date(entry.fecha).toLocaleString()})</li>`).join('');
+    const game = "Tic-Tac-Toe-Salo"; // Nombre único del juego
+    fetch(`http://primosoft.com.mx/games/api/getscores.php?game=${game}&orderAsc=1`)
+        .then(response => response.json())
+        .then(scores => {
+            listaMejoresTiempos.innerHTML = scores
+                .map(score => `<li>${score.player}: ${score.score} ms</li>`)
+                .join('');
+        })
+        .catch(error => console.error("Error al cargar los puntajes:", error));
 }
