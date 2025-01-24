@@ -5,37 +5,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tic-Tac-Toe</title>
     <link rel="stylesheet" href="css\style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <h1>Tic-Tac-Toe</h1>
 
     <div class="container">
         <!-- Sección del tablero de juego -->
-        <div class="juego">
+        <div class="juego" id="tablero">
             <div class="tablero">
-                <div class="celda" data-index="0"></div>
-                <div class="celda" data-index="1"></div>
-                <div class="celda" data-index="2"></div>
-                <div class="celda" data-index="3"></div>
-                <div class="celda" data-index="4"></div>
-                <div class="celda" data-index="5"></div>
-                <div class="celda" data-index="6"></div>
-                <div class="celda" data-index="7"></div>
-                <div class="celda" data-index="8"></div>
+                <div class="celda" data-index="0" id="CSI"></div>
+                <div class="celda" data-index="1" id="CSC"></div>
+                <div class="celda" data-index="2" id="CSD"></div>
+                <div class="celda" data-index="3" id="CCI"></div>
+                <div class="celda" data-index="4" id="CCC"></div>
+                <div class="celda" data-index="5" id="CCD"></div>
+                <div class="celda" data-index="6" id="CII"></div>
+                <div class="celda" data-index="7" id="CIC"></div>
+                <div class="celda" data-index="8" id="CID"></div>
             </div>
             <p id="mensaje"></p>
-            <button id="reiniciar">Reiniciar juego</button>
+            <button id="reiniciar">
+                <i class="fas fa-redo"></i> Reiniciar juego
+            </button>
+            <div class="checkboxCiego">
+		        <input type="checkbox" id="modoCeguera">
+				<label for="modoCeguera" class="leva">Lectura en voz alta</label>
+			</div>
+            <button class="manual-header" onclick="toggleManual()" id="botonManualDeUsuario">
+                <i class="fas fa-book"></i> Ver Guía de uso
+            </button>
         </div>
 
         <!-- Sección de mejores tiempos -->
-        <div class="tiempos">
+        <div class="tiempos" id="mejorestiempos">
             <h2>Mejores Tiempos</h2>
             <ol id="mejoresTiempos"></ol>
         </div>
-        <ul>
-            <li><a href="scores.php?game=Tic-Tac-Toe">Tic-Tac-Toe</a></li>
-            <!-- Aquí puedes añadir otros juegos -->
-        </ul>
+
+        <!-- Contenedor del manual de usuario, inicialmente oculto -->
+        <div class="manual-container" id="manualDeUsuario">
+            <h1 class="h1-guia">Guía de Uso</h1>
+            <div class="panelManual">
+                Bienvenido al juego de Tic-Tac-Toe, esperamos que este sistema te brinde una buena experiencia.
+                <h2>Partes de la aplicación</h2>
+                Este juego cuenta con dos paneles:
+                <div class="ponteHorizontal">
+                <h3>Panel de juego</h3>
+                <button id="LeerPanelDeJuego">Leer Panel de Juego</button></div>
+                <p>Tal como lo dice su propio nombre, lo primero que muestra en el panel de juego, es el tablero de Tic-Tac-Toe, cada uno de los cuadrantes del tablero es un botón interactivo, al seleccionar el botón, se marcará con una X el movimiento del usuario.
+                    Lo segundo que nos muestra es el mensaje (este solo se hace presente cuando termina una jugada), cuando gana el usuario se muestra el tiempo que duró la jugada, si ganó la máquina o computadora se muestra el mensaje "¡La computadora ha ganado!", si ninguno de los dos gana se muestra el mensaje "¡Empate!".
+                    Lo tercero que nos muestra es el botón de reinicio de jugada, su función consta de limpiar el tablero y comenzar una nueva jugada.
+                    Lo cuarto que nos muestra, es un CheckBox que habilita y deshabilita la función de lectura en voz alta, esto es escencial puesto que la experiencia no solo es para las personas con vista, ¡Las personas con discapacidad visual también pueden jugar!, la función "Lectura en voz alta" consiste en mencionar cada elemento sobre el que esté situado el cursor del ratón, brindando orientación auditiva.
+                    Lo último que nos muestra el panel, es un hipervínculo a este manual de usuario.</p>
+                
+                <div class="ponteHorizontal"><h3>Panel de mejores tiempos</h3>
+                <button id="LeerPanelDeMejoresTiempos"> Leer Panel de mejores tiempos</button></div>
+                <p>En este panel nos muestra una lista de los mejores tiempos de jugadas anteriores, mostrando el nombre del jugador, el tiempo en segundos, la fecha y hora de jugada.</p>
+                
+                <div class="ponteHorizontal"><h2>Cómo funciona la aplicación</h2>
+                <button id="LeerComoFuncionaLaAplicacion">Leer Cómo Funciona la Aplicación</button></div>
+                <p>Esta aplicación funciona con las mismas bases del juego de Tic-Tac-Toe: </p>
+                <ol>
+                    <li>Si el usuario padece discapacidad visual, se da click en el checkbox "Lectura en voz alta"</li>
+	                <li>El usuario selecciona la casilla inicial en donde quiera colocar "X"</li>
+	                <li>La computadora seleccionará otra casilla para colocar "O"</li>
+	                <li>Se repiten los pasos 1 y 2 hasta que, o el jugador, o la computadora, gane. Esto sucede si uno de los dos logra hacer una línea de tres fichas del mismo jugador.</li>
+	                <li>Si gana el jugador o usuario, se mostrará en debajo del tablero el tiempo transcurrido en jugada, después la aplicación le pedirá que diga su nombre en voz alta, para después ser registrado en la lista de jugadas (si está dentro de los mejores 10 tiempos (que implica en las posiciones de menor tiempo), se mostrará en la lista de mejores tiempos)</li>
+	                <li>Si se requiere jugar otra vez, se da clic en el botón "Reiniciar juego"</li>
+                </ol>
+                
+                <div class="ponteHorizontal"><h2>Reglas</h2><button id="LeerReglas">Leer Reglas</button></div>
+                <ul>
+                    <li>Solo se permite seleccionar una casilla o cuadrante por turno</li>
+	                <li>No se puede seleccionar una casilla o cuadrante que ya esté seleccionada, por ejemplo, si esa casilla tiene "O" o "X"</li>
+	                <li>Se puede reiniciar la jugada en cualquier momento</li>
+                </ul>
+                <p>Presione la tecla "Q" para salir del manual de usuario.</p>
+            </div>
+        </div>
+
     </div>
 
     <script src="js\script.js"></script>

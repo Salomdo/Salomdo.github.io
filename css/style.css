@@ -13,9 +13,39 @@ body {
     color: #fff;
 }
 
+.ponteHorizontal {
+	display: flex;
+	gap: 7px;
+}
+
 h1 {
     margin-top: 20px;
     color: #fafafa;
+}
+
+.h1-guia {
+    margin-top: 20px;
+    color: black;
+}
+
+.leva{
+	color: black;
+}
+
+.checkboxCiego{
+	padding-top:20px;
+	padding-bottom:20px;
+	flex-direction: column;
+}
+
+.panelManual{
+    width: 80%;
+    align-items: center;
+    background-color: white;
+    color: black;
+    justify-content: center;
+    padding: 20px;
+    border-radius:10px;
 }
 
 .container {
@@ -112,7 +142,7 @@ button:hover {
 .tiempos h2 {
     margin-top: 0;
     color: #333;
-    text-align: center;
+    text-align: right;
 }
 
 #mejoresTiempos {
@@ -130,13 +160,47 @@ button:hover {
     color: #333; 
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: right;
+    text-align: right;
 }
 
 #mejoresTiempos li:hover {
     border: 2px solid #888; 
     cursor: pointer;
 }
+
+/* Guía de uso */
+
+.manual-container {
+    display: none; /* Mantener oculta por defecto */
+    width: 100%;
+    align-items: center;
+    background-color: white;
+    color: black;
+    justify-content: center;
+    padding: 20px;
+    border-radius:10px;
+}
+.manual-header {
+    background-color: #222;
+    color: #fafafa;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.manual-header:hover {
+    background-color: #555;
+}
+
+button i {
+    margin-right: 8px;
+    font-size: 1.2em;  
+}
+
 
 /* Intento de hacerlo responsive, lo siento profe me encanta el front-end y el diseño en general */
 
