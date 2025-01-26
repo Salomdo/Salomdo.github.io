@@ -7,6 +7,8 @@ let tiempoFin;
 let nombreJugador = null;
 let modoCegueraActivado = true;
 let truePassword = false;
+let modoOtaku = false;
+let modoMultijugador = false;
 
 
 const condicionesGanadoras = [
@@ -14,6 +16,8 @@ const condicionesGanadoras = [
     [0, 3, 6], [1, 4, 7], [2, 5, 8],
     [0, 4, 8], [2, 4, 6]
 ];
+
+
 
 const celdas = document.querySelectorAll('.celda');
 const mensaje = document.getElementById('mensaje');
@@ -31,6 +35,7 @@ const CIC = document.getElementById('CIC');
 const CID = document.getElementById('CID');
 
 const modoCeguera = document.getElementById('modoCeguera');
+const modopvp = document.getElementById('modopvp');
 const manualDeUsuario = document.getElementById('botonManualDeUsuario')
 
 const leerPanelDeJuego = document.getElementById('LeerPanelDeJuego');
@@ -40,6 +45,10 @@ const leerReglas = document.getElementById('LeerReglas');
 
 iniciarJuego();
 
+
+modopvp.addEventListener('mouseover', () => {
+	leerTexto("Modo multijugador");
+});
 leerPanelDeJuego.addEventListener('mouseover', () => {
 	leerTexto("Leer apartado panel de juego");
 });
@@ -123,12 +132,6 @@ modoCeguera.addEventListener('mouseover', ()=>{
 	leerTexto("Lectura en voz alta");
 });
 
-manualDeUsuario.addEventListener('click', () => {
-	leerTexto("Ahora estás en el manual de usuario");
-	leerTexto("Presione el botón del apartado para leer en voz alta el contenido");
-	leerTexto("Presione la tecla Q para regresar a la pantalla del juego");
-});
-
 modoCeguera.checked = true;
 
 modoCeguera.addEventListener('change', () => {
@@ -138,6 +141,17 @@ modoCeguera.addEventListener('change', () => {
     } else {
         leerTexto("Lectura en voz alta desactivada");
         modoCegueraActivado = false;
+    }
+});
+modopvp.addEventListener('change', () => {
+    if (modopvp.checked) {
+        modoMultijugador = true;
+        leerTexto("Modo multijugador activado");
+        reiniciarJuego();
+    } else {
+        leerTexto("Modo multijugador desactivado");
+        modoMultijugador = false;
+        reiniciarJuego();
     }
 });
 
@@ -151,7 +165,12 @@ function leerTexto(texto) {
 		
 		// Configurar la voz y el idioma
 		utterance.lang = 'es-ES'; // Español
-		utterance.pitch = 1;      // Tonalidad
+		utterance.pitch = 1;    // Tonalidad
+		if(modoOtaku){
+			//Pongo esto para su comodidad, GRACIAS POR SU ATENCIÓN :]
+			utterance.lang = 'ja-JA';
+			utterance.pitch = 1.2;
+		}
 		utterance.rate = 1;       // Velocidad de lectura
 
 		// Iniciar la síntesis de voz
@@ -170,39 +189,110 @@ function iniciarJuego() {
 }
 
 function manejarClickCelda(event) {
-    const indiceCelda = event.target.getAttribute('data-index');
+	if (modoMultijugador){
+		if (jugadorActual=="X"){
+			const indiceCelda = event.target.getAttribute('data-index');
 
-    if (tablero[indiceCelda] == "O") {
-        leerTexto("No puedes ingresar aquí equis, el cuadrante ya fue ocupado por círculo");
-    }
-    if (tablero[indiceCelda] == "X") {
-        leerTexto("No puedes ingresar aquí equis, el cuadrante ya fue ocupado por equis");
-    }
-    if (tablero[indiceCelda] !== "" || !juegoActivo) return;
+			if (tablero[indiceCelda] == "O") {
+				leerTexto("No puedes ingresar aquí equis, el cuadrante ya fue ocupado por círculo");
+			}
+			if (tablero[indiceCelda] == "X") {
+				leerTexto("No puedes ingresar aquí equis, el cuadrante ya fue ocupado por equis");
+			}
+			if (tablero[indiceCelda] !== "" || !juegoActivo) return;
 
-    tablero[indiceCelda] = jugadorActual;
-    leerTexto("Usuario ingresó X");
-    event.target.innerText = jugadorActual;
-    event.target.classList.add(jugadorActual.toLowerCase());
+			tablero[indiceCelda] = jugadorActual;
+			leerTexto("Jugador 1 ingresó X, turno de jugador 2");
+			event.target.innerText = jugadorActual;
+			event.target.classList.add(jugadorActual.toLowerCase());
 
-    if (verificarGanador()) {
-        juegoActivo = false;
-        leerTexto("Felicidades, has ganado, di en voz alta tu nombre");
-        tiempoFin = new Date().getTime();
-        const tiempoTranscurrido = (tiempoFin - tiempoInicio) / 1000;
-        mensaje.innerText = `Tiempo: ${tiempoTranscurrido} segundos`;
-        capturarNombreJugador().then(nombre => {
-            nombreJugador = nombre || "Usuario";
-            guardarMejorTiempo(nombreJugador, tiempoTranscurrido);
-            cambiarFondo(true);
-        });
-    } else if (!tablero.includes("")) {
-        leerTexto("Empate");
-        mensaje.innerText = "¡Empate!";
-    } else {
-        jugadorActual = "O";
-        movimientoComputadora();
-    }
+			if (verificarGanador()) {
+				juegoActivo = false;
+				leerTexto("Felicidades, jugador 1, has ganado, di en voz alta tu nombre");
+				tiempoFin = new Date().getTime();
+				const tiempoTranscurrido = (tiempoFin - tiempoInicio) / 1000;
+				mensaje.innerText = `Tiempo: ${tiempoTranscurrido} segundos`;
+				capturarNombreJugador().then(nombre => {
+				    nombreJugador = nombre || "Usuario";
+				    guardarMejorTiempo(nombreJugador, tiempoTranscurrido);
+				    cambiarFondo(true);
+				});
+			} else if (!tablero.includes("")) {
+				leerTexto("Empate");
+				mensaje.innerText = "¡Empate!";
+			} else {
+				jugadorActual = "O";
+			}
+		}else{
+			const indiceCelda = event.target.getAttribute('data-index');
+
+			if (tablero[indiceCelda] == "O") {
+				leerTexto("No puedes ingresar aquí O, el cuadrante ya fue ocupado por círculo");
+			}
+			if (tablero[indiceCelda] == "X") {
+				leerTexto("No puedes ingresar aquí O, el cuadrante ya fue ocupado por equis");
+			}
+			if (tablero[indiceCelda] !== "" || !juegoActivo) return;
+
+			tablero[indiceCelda] = jugadorActual;
+			leerTexto("Jugador 2 ingresó O, turno de jugador 1");
+			event.target.innerText = jugadorActual;
+			event.target.classList.add(jugadorActual.toLowerCase());
+			if (verificarGanador()) {
+				juegoActivo = false;
+				leerTexto("Felicidades, jugador 2, has ganado, di en voz alta tu nombre");
+				tiempoFin = new Date().getTime();
+				const tiempoTranscurrido = (tiempoFin - tiempoInicio) / 1000;
+				mensaje.innerText = `Tiempo: ${tiempoTranscurrido} segundos`;
+				capturarNombreJugador().then(nombre => {
+				    nombreJugador = nombre || "Usuario";
+				    guardarMejorTiempo(nombreJugador, tiempoTranscurrido);
+				    cambiarFondo(true);
+				});
+			} else if (!tablero.includes("")) {
+				leerTexto("Empate");
+				mensaje.innerText = "¡Empate!";
+			} else {
+				jugadorActual = "X";
+			}
+		}
+		
+	}else{
+		const indiceCelda = event.target.getAttribute('data-index');
+
+		if (tablero[indiceCelda] == "O") {
+		    leerTexto("No puedes ingresar aquí equis, el cuadrante ya fue ocupado por círculo");
+		}
+		if (tablero[indiceCelda] == "X") {
+		    leerTexto("No puedes ingresar aquí equis, el cuadrante ya fue ocupado por equis");
+		}
+		if (tablero[indiceCelda] !== "" || !juegoActivo) return;
+
+		tablero[indiceCelda] = jugadorActual;
+		leerTexto("Usuario ingresó X");
+		event.target.innerText = jugadorActual;
+		event.target.classList.add(jugadorActual.toLowerCase());
+
+		if (verificarGanador()) {
+		    juegoActivo = false;
+		    leerTexto("Felicidades, has ganado, di en voz alta tu nombre");
+		    tiempoFin = new Date().getTime();
+		    const tiempoTranscurrido = (tiempoFin - tiempoInicio) / 1000;
+		    mensaje.innerText = `Tiempo: ${tiempoTranscurrido} segundos`;
+		    capturarNombreJugador().then(nombre => {
+		        nombreJugador = nombre || "Usuario";
+		        guardarMejorTiempo(nombreJugador, tiempoTranscurrido);
+		        cambiarFondo(true);
+		    });
+		} else if (!tablero.includes("")) {
+		    leerTexto("Empate");
+		    mensaje.innerText = "¡Empate!";
+		} else {
+		    jugadorActual = "O";
+		    movimientoComputadora();
+		}
+	}
+    
 }
 
 function capturarNombreJugador() {
@@ -217,9 +307,11 @@ function capturarNombreJugador() {
         if (!modoCeguera.checked) {
         	truePassword = false;
         	while(!truePassword){
+        		leerTexto("Por favor, ingresa tu nombre: Solo se permiten hasta 15 caracteres.");
 		        const nombre = prompt("Por favor, ingresa tu nombre: \n Solo se permiten hasta 15 caracteres.");
 
 		        if (nombre && nombre.length > 15) {
+		        	leerTexto("El nombre no puede tener más de 15 caracteres");
 		            alert("El nombre no puede tener más de 15 caracteres.");
 		            resolve(nombre.substring(0, 15));
 		            truePassword = false;
@@ -316,6 +408,7 @@ function cambiarFondo(esVictoria) {
 }
 
 function reiniciarJuego() {
+	leerTexto("¿Estás seguro de que quieres reiniciar la partida?, presiona Enter para confirmar, presiona Esc para cancelar");
     if (confirm("¿Estás seguro de que quieres reiniciar la partida?")) {
         tablero = ["", "", "", "", "", "", "", "", ""];
         juegoActivo = true;
@@ -353,10 +446,14 @@ function toggleManual() {
     const tablero = document.getElementById("tablero");
     const tiempos = document.getElementById("mejorestiempos");
     if (manual.style.display === "none" || manual.style.display === "") {
+		leerTexto("Ahora estás en el manual de usuario");
+		leerTexto("Presione el botón del apartado para leer en voz alta el contenido");
+		leerTexto("Presione la tecla Q para regresar a la pantalla del juego");
         manual.style.display = "block";
         tablero.style.display = "none";
         tiempos.style.display = "none";
     } else {
+		leerTexto("Ahora estás en el tablero del juego");
         manual.style.display = "none";
         tablero.style.display = "";
         tiempos.style.display = "";
@@ -367,35 +464,53 @@ document.addEventListener('keydown', (event) => {
     if (event.key === 'q' || event.key === 'Q') {
         toggleManual(); 
     }
+    if (event.key === 'o' || event.key === 'O') {
+	    const nombre = prompt("a?");
+        if (nombre == "beginModoOtaku"){
+        	modoOtaku = true;
+        }
+    }
+    if (event.key === 'r' || event.key === 'R') {
+        reiniciarJuego();
+    }
     if (event.key === '7' || event.key === '8' || event.key === '9' || event.key === '4' || event.key === '5' || event.key === '6' || event.key === '1' || event.key === '2' || event.key === '3') {
 		let indiceCelda = 0;
         switch (event.code){
         	case 'Numpad7':
         		indiceCelda = 0;
+        		leerTexto("El usuario ha puesto X en el cuadrante superior izquierdo");
         	break;
         	case 'Numpad8':
         		indiceCelda = 1;
+        		leerTexto("El usuario ha puesto X en el cuadrante superior central");
         	break;
         	case 'Numpad9':
         		indiceCelda = 2;
+        		leerTexto("El usuario ha puesto X en el cuadrante superior derecho");
         	break;
         	case 'Numpad4':
         		indiceCelda = 3;
+        		leerTexto("El usuario ha puesto X en el cuadrante central izquierdo");
         	break;
         	case 'Numpad5':
         		indiceCelda = 4;
+        		leerTexto("El usuario ha puesto X en el cuadrante central");
         	break;
         	case 'Numpad6':
         		indiceCelda = 5;
+        		leerTexto("El usuario ha puesto X en el cuadrante central derecho");
         	break;
         	case 'Numpad1':
         		indiceCelda = 6;
+        		leerTexto("El usuario ha puesto X en el cuadrante inferior izquierdo");
         	break;
         	case 'Numpad2':
         		indiceCelda = 7;
+        		leerTexto("El usuario ha puesto X en el cuadrante inferior central");
         	break;
         	case 'Numpad3':
         		indiceCelda = 8;
+        		leerTexto("El usuario ha puesto X en el cuadrante inferior derecho");
         	break;
         }
         
@@ -409,7 +524,6 @@ document.addEventListener('keydown', (event) => {
 		if (tablero[indiceCelda] !== "" || !juegoActivo) return;
 
 		tablero[indiceCelda] = jugadorActual;
-		leerTexto("Usuario ingresó X");
 		
 		celdas[indiceCelda].innerText = jugadorActual;
 		
@@ -436,3 +550,11 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
+window.addEventListener('beforeunload', function (event) {
+    const unsavedChanges = document.getElementById('unsavedChanges').value;
+
+    if (unsavedChanges === "true") {
+        event.preventDefault();
+        event.returnValue = '';
+    }
+});

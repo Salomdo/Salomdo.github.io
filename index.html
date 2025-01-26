@@ -9,7 +9,24 @@
 </head>
 <body>
     <h1>Tic-Tac-Toe</h1>
+	<script>
+	document.addEventListener('DOMContentLoaded', () => {
+		texto = "Bienvenido al juego de Tic-Tac-Toe, presione la tecla Q para abrir el manual de usuario";
+		alert("Bienvenido al juego de Tic-Tac-Toe, presione la tecla Q para abrir el manual de usuario");
+		const utterance = new SpeechSynthesisUtterance(texto);
+		
+		// Configurar la voz y el idioma
+		utterance.lang = 'es-ES'; // Español
+		utterance.pitch = 1;      // Tonalidad
+		utterance.rate = 1;       // Velocidad de lectura
 
+		// Iniciar la síntesis de voz
+		window.speechSynthesis.speak(utterance);
+	});
+	</script>
+    <form id="hiddenForm">
+        <input type="hidden" id="unsavedChanges" value="true">
+    </form>    
     <div class="container">
         <!-- Sección del tablero de juego -->
         <div class="juego" id="tablero">
@@ -31,6 +48,10 @@
             <div class="checkboxCiego">
 		        <input type="checkbox" id="modoCeguera">
 				<label for="modoCeguera" class="leva">Lectura en voz alta</label>
+			</div>
+            <div class="checkboxpvp">
+		        <input type="checkbox" id="modopvp">
+				<label for="modopvp" class="leva">Modo multijugador</label>
 			</div>
             <button class="manual-header" onclick="toggleManual()" id="botonManualDeUsuario">
                 <i class="fas fa-book"></i> Ver Guía de uso
@@ -90,3 +111,14 @@
     <script src="js\script.js"></script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+<!--Press "O", and type "beginModoOtaku"-->
+
+
