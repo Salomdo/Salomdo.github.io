@@ -10,6 +10,17 @@ let truePassword = false;
 let modoOtaku = false;
 let modoMultijugador = false;
 
+const teclasNumpad = {
+    97: 6, // Numpad 1 -> Posición 6 (Inferior Izquierdo)
+    98: 7, // Numpad 2 -> Posición 7 (Inferior Central)
+    99: 8, // Numpad 3 -> Posición 8 (Inferior Derecho)
+    100: 3, // Numpad 4 -> Posición 3 (Central Izquierdo)
+    101: 4, // Numpad 5 -> Posición 4 (Centro)
+    102: 5, // Numpad 6 -> Posición 5 (Central Derecho)
+    103: 0, // Numpad 7 -> Posición 0 (Superior Izquierdo)
+    104: 1, // Numpad 8 -> Posición 1 (Superior Central)
+    105: 2, // Numpad 9 -> Posición 2 (Superior Derecho)
+};
 
 const condicionesGanadoras = [
     [0, 1, 2], [3, 4, 5], [6, 7, 8],
@@ -179,13 +190,70 @@ function leerTexto(texto) {
     
 }
 
-
-
 function iniciarJuego() {
+	document.addEventListener('keydown', manejarTeclaNumpad);
     celdas.forEach(celda => celda.addEventListener('click', manejarClickCelda));
     botonReiniciar.addEventListener('click', reiniciarJuego);
     cargarMejoresTiempos();
     tiempoInicio = new Date().getTime();
+}
+
+function finalizarJuego(mensajeVictoria) {
+    juegoActivo = false;
+    leerTexto(mensajeVictoria);
+    tiempoFin = new Date().getTime();
+    const tiempoTranscurrido = (tiempoFin - tiempoInicio) / 1000;
+    mensaje.innerText = `Tiempo: ${tiempoTranscurrido} segundos`;
+    capturarNombreJugador().then(nombre => {
+        nombreJugador = nombre || "Usuario";
+        guardarMejorTiempo(nombreJugador, tiempoTranscurrido);
+        cambiarFondo(true);
+    });
+}
+
+function manejarTeclaNumpad(event) {
+    const indiceCelda = teclasNumpad[event.keyCode];
+    if (indiceCelda === undefined || !juegoActivo || tablero[indiceCelda] !== "") return;
+
+    if (modoMultijugador) {
+        // Modo multijugador
+        if (jugadorActual === "X") {
+            tablero[indiceCelda] = "X";
+            celdas[indiceCelda].innerText = "X";
+            celdas[indiceCelda].classList.add('x');
+            leerTexto("Jugador 1 ingresó X, turno de jugador 2");
+            if (verificarGanador()) {
+                finalizarJuego("Felicidades, jugador 1, has ganado, di en voz alta tu nombre");
+            } else {
+                jugadorActual = "O";
+            }
+        } else {
+            tablero[indiceCelda] = "O";
+            celdas[indiceCelda].innerText = "O";
+            celdas[indiceCelda].classList.add('o');
+            leerTexto("Jugador 2 ingresó O, turno de jugador 1");
+            if (verificarGanador()) {
+                finalizarJuego("Felicidades, jugador 2, has ganado, di en voz alta tu nombre");
+            } else {
+                jugadorActual = "X";
+            }
+        }
+    } else {
+        // Modo jugador contra CPU
+        tablero[indiceCelda] = jugadorActual;
+        celdas[indiceCelda].innerText = jugadorActual;
+        celdas[indiceCelda].classList.add(jugadorActual.toLowerCase());
+        leerTexto(`Usuario ingresó ${jugadorActual}`);
+        if (verificarGanador()) {
+            finalizarJuego("Felicidades, has ganado, di en voz alta tu nombre");
+        } else if (!tablero.includes("")) {
+            leerTexto("Empate");
+            mensaje.innerText = "¡Empate!";
+        } else {
+            jugadorActual = "O";
+            movimientoComputadora();
+        }
+    }
 }
 
 function manejarClickCelda(event) {
@@ -197,7 +265,7 @@ function manejarClickCelda(event) {
 				leerTexto("No puedes ingresar aquí equis, el cuadrante ya fue ocupado por círculo");
 			}
 			if (tablero[indiceCelda] == "X") {
-				leerTexto("No puedes ingresar aquí equis, el cuadrante ya fue ocupado por equis");
+				leerTexto("No puedes ingresar aquí círculo, el cuadrante ya fue ocupado por equis");
 			}
 			if (tablero[indiceCelda] !== "" || !juegoActivo) return;
 
@@ -264,7 +332,7 @@ function manejarClickCelda(event) {
 		    leerTexto("No puedes ingresar aquí equis, el cuadrante ya fue ocupado por círculo");
 		}
 		if (tablero[indiceCelda] == "X") {
-		    leerTexto("No puedes ingresar aquí equis, el cuadrante ya fue ocupado por equis");
+		    leerTexto("No puedes ingresar aquí círculo, el cuadrante ya fue ocupado por equis");
 		}
 		if (tablero[indiceCelda] !== "" || !juegoActivo) return;
 
@@ -299,29 +367,34 @@ function capturarNombreJugador() {
     return new Promise(resolve => {
         if (!('webkitSpeechRecognition' in window)) {
             leerTexto("Ocurrió un problema, tu navegador no soporta la Web Speech API");
-            mensaje.innerText("Tu navegador no soporta la Web Speech API.");
-            resolve("Usuario");
+            mensaje.innerText = "Tu navegador no soporta la Web Speech API.";
+            resolve("Usuario"); // Asignar un nombre predeterminado
             return;
         }
 
-        if (!modoCeguera.checked) {
-        	truePassword = false;
-        	while(!truePassword){
-        		leerTexto("Por favor, ingresa tu nombre: Solo se permiten hasta 15 caracteres.");
-		        const nombre = prompt("Por favor, ingresa tu nombre: \n Solo se permiten hasta 15 caracteres.");
+        if (!modoCeguera.checked) { // Modo lectura desactivada
+            truePassword = false;
+            while (!truePassword) {
+                leerTexto("Por favor, ingresa tu nombre: Solo se permiten hasta 15 caracteres.");
+                const nombre = prompt("Por favor, ingresa tu nombre: \n Solo se permiten hasta 15 caracteres.");
 
-		        if (nombre && nombre.length > 15) {
-		        	leerTexto("El nombre no puede tener más de 15 caracteres");
-		            alert("El nombre no puede tener más de 15 caracteres.");
-		            resolve(nombre.substring(0, 15));
-		            truePassword = false;
-		        } else {
-		            truePassword = true;
-		        }
-        	}
+                if (nombre && nombre.length > 15) {
+                    leerTexto("El nombre no puede tener más de 15 caracteres");
+                    alert("El nombre no puede tener más de 15 caracteres.");
+                    // Recortar el nombre a 15 caracteres
+                    resolve(nombre.substring(0, 15));
+                    truePassword = false;
+                } else if (nombre) {
+                    resolve(nombre); // Devolver el nombre válido
+                    truePassword = true;
+                } else {
+                    leerTexto("Nombre inválido. Intenta de nuevo.");
+                }
+            }
             return;
         }
 
+        // Modo lectura activada
         const recognition = new webkitSpeechRecognition();
         recognition.lang = 'es-ES';
         recognition.interimResults = false;
@@ -341,6 +414,7 @@ function capturarNombreJugador() {
         recognition.start();
     });
 }
+
 
 
 function movimientoComputadora() {
@@ -519,7 +593,7 @@ document.addEventListener('keydown', (event) => {
 		    leerTexto("No puedes ingresar aquí equis, el cuadrante ya fue ocupado por círculo");
 		}
 		if (tablero[indiceCelda] == "X") {
-		    leerTexto("No puedes ingresar aquí equis, el cuadrante ya fue ocupado por equis");
+		    leerTexto("No puedes ingresar aquí círculo, el cuadrante ya fue ocupado por equis");
 		}
 		if (tablero[indiceCelda] !== "" || !juegoActivo) return;
 
